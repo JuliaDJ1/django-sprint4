@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import handler403, handler404, handler500
+import users
 
 urlpatterns = [
     path('admin/', admin.site.urls),
