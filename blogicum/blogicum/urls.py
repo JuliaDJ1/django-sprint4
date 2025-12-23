@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import handler403, handler404, handler500
 
-from blog.views import register  # Импорт register из blog.views
+from blog.views import register
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -41,7 +41,7 @@ def post_detail(request, post_id):
     if post.author != request.user and (not post.is_published or post.pub_date > timezone.now() or not post.category.is_published):
         raise Http404
     form = CommentForm()
-    comments = post.comments.order_by('created_at')
+    comments = post.comments.all()
     context = {'post': post, 'form': form, 'comments': comments}
     return render(request, 'blog/detail.html', context)
 
@@ -102,7 +102,7 @@ def edit_comment(request, post_id, comment_id):
     if form.is_valid():
         form.save()
         return redirect('blog:post_detail', post_id=post_id)
-    return render(request, 'blog/comment.html', {'form': form, 'comment': comment, 'post': comment.post})
+    return render(request, 'blog/comment.html', {'form': form, 'comment': comment})
 
 @login_required
 def delete_post(request, post_id):
@@ -129,7 +129,7 @@ def edit_profile(request):
     form = UserEditForm(request.POST or None, instance=request.user)
     if form.is_valid():
         form.save()
-        return redirect('profile', username=request.user.username)
+        return redirect('blog:profile', username=request.user.username)
     return render(request, 'blog/edit_profile.html', {'form': form})
 
 def register(request):
