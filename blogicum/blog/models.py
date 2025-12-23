@@ -6,6 +6,7 @@ User = get_user_model()
 MAX_LENGTH = 256
 STR_DISPLAY_LENGTH = 15
 
+
 class PublishedModel(models.Model):
     is_published = models.BooleanField(
         default=True,
@@ -23,6 +24,7 @@ class PublishedModel(models.Model):
     class Meta:
         abstract = True
 
+
 class Location(PublishedModel):
     name = models.CharField(
         max_length=MAX_LENGTH,
@@ -37,6 +39,7 @@ class Location(PublishedModel):
         if len(self.name) > STR_DISPLAY_LENGTH:
             return self.name[:STR_DISPLAY_LENGTH] + '...'
         return self.name
+
 
 class Category(PublishedModel):
     title = models.CharField(
@@ -64,6 +67,7 @@ class Category(PublishedModel):
         if len(self.title) > STR_DISPLAY_LENGTH:
             return self.title[:STR_DISPLAY_LENGTH] + '...'
         return self.title
+
 
 class Post(PublishedModel):
     title = models.CharField(
@@ -100,12 +104,6 @@ class Post(PublishedModel):
         blank=False,  # Обязательное поле при создании
         verbose_name='Категория'
     )
-    image = models.ImageField(
-        'Изображение',
-        upload_to='posts/images/',
-        blank=True,
-        null=True
-    )
 
     class Meta:
         verbose_name = 'публикация'
@@ -115,31 +113,3 @@ class Post(PublishedModel):
         if len(self.title) > STR_DISPLAY_LENGTH:
             return self.title[:STR_DISPLAY_LENGTH] + '...'
         return self.title
-
-class Comment(models.Model):
-    post = models.ForeignKey(
-        Post,
-        on_delete=models.CASCADE,
-        related_name='comments',
-        verbose_name='Публикация'
-    )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name='Автор комментария'
-    )
-    text = models.TextField(
-        verbose_name='Текст комментария'
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Дата создания'
-    )
-
-    class Meta:
-        verbose_name = 'комментарий'
-        verbose_name_plural = 'Комментарии'
-        ordering = ['created_at']
-
-    def __str__(self):
-        return self.text[:STR_DISPLAY_LENGTH]
