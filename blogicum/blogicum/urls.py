@@ -1,14 +1,14 @@
 from django.contrib import admin
 from django.urls import path, include
-from django.conf.urls import handler403, handler404, handler500
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls import handler403, handler404, handler500
 
-from .users import register
+from blog.views import register  # Импорт register из blog.views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('blog.urls', namespace='blog')),
+    path('', include('blog.urls')),
     path('pages/', include('pages.urls')),
     path('auth/', include('django.contrib.auth.urls')),
     path('auth/registration/', register, name='registration'),
