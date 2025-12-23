@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from .models import Post, Category, Comment
 from .forms import RegistrationForm, ProfileEditForm, PostForm, CommentForm
 from django.core.paginator import Paginator
-from datetime import timezone
+from django.utils import timezone
+from django.http import Http404
 
 class UserRegistrationView(CreateView):
     form_class = RegistrationForm
@@ -80,6 +81,8 @@ def edit_post(request, post_id):
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
+    if not (post.is_published and post.pub_date <= timezone.now()) and (not request.user.is_authenticated or request.user != post.author):
+        raise Http404
     comments = post.comments.order_by('created_at')
     form = CommentForm()
     comment_count = comments.count()
