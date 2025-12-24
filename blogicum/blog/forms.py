@@ -5,12 +5,6 @@ from django.contrib.auth.models import User
 from .models import Comment, Post
 
 
-class UserEditForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'username', 'email')
-
-
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
@@ -29,7 +23,20 @@ class CommentForm(forms.ModelForm):
         fields = ('text',)
 
 
+class UserEditForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'username', 'email')
+
+
 class RegisterForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2')
+        fields = (
+            'first_name',
+            'last_name',
+            'username',
+            'email',
+            'password1',
+            'password2',
+        )

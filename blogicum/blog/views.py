@@ -59,7 +59,7 @@ def profile(request, username):
 @login_required
 def edit_profile(request):
     user = request.user
-    form = EditUserFormTester.form_class(request.POST or None, instance=user)
+    form = UserEditForm(request.POST or None, instance=user)
     if form.is_valid():
         form.save()
         return redirect('blog:profile', username=user.username)
@@ -80,7 +80,11 @@ def register(request):
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if request.user != post.author:
-        if not (post.is_published and post.pub_date <= timezone.now() and post.category.is_published):
+        if not (
+            post.is_published
+            and post.pub_date <= timezone.now()
+            and post.category.is_published
+        ):
             return render(request, 'pages/404.html', status=404)
     form = CommentForm()
     comments = post.comments.all()
@@ -95,7 +99,10 @@ def create_post(request):
         post = form.save(commit=False)
         post.author = request.user
         post.save()
-        return redirect('blog:profile', username=request.user.username)
+        return redirect(
+            'blog:profile',
+            username=request.user.username
+        )
     context = {'form': form}
     return render(request, 'blog/create.html', context)
 
@@ -105,7 +112,11 @@ def edit_post(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if post.author != request.user:
         return redirect('blog:post_detail', post_id=post_id)
-    form = PostForm(request.POST or None, files=request.FILES or None, instance=post)
+    form = PostForm(
+        request.POST or None,
+        files=request.FILES or None,
+        instance=post
+    )
     if form.is_valid():
         form.save()
         return redirect('blog:post_detail', post_id=post_id)
