@@ -1,19 +1,17 @@
-from django.contrib import admin
-from django.urls import path, include
-from django.views.generic import TemplateView
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
+
+from blog.views import register
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('pages/', include('pages.urls')),
     path('auth/', include('django.contrib.auth.urls')),
+    path('auth/registration/', register, name='registration'),
     path('', include('blog.urls')),
-    path('about/', TemplateView.as_view(template_name='pages/about.html'), name='about'),
-    path('rules/', TemplateView.as_view(template_name='pages/rules.html'), name='rules'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-handler403 = TemplateView.as_view(template_name='pages/403csrf.html')
-handler404 = TemplateView.as_view(template_name='pages/404.html')
-handler500 = TemplateView.as_view(template_name='pages/500.html')
+handler404 = 'pages.views.page_not_found'
+handler500 = 'pages.views.server_error'
