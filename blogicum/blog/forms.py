@@ -23,7 +23,7 @@ class CommentForm(forms.ModelForm):
         fields = ('text',)
 
 
-class UserEditForm(forms.ModelForm):
+class UserEditForm(forms.ModelForm):  # Переименовали и используем ModelForm
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'username', 'email')
