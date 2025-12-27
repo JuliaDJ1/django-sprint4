@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.validators import MinLengthValidator
 from django.db import models
 
 
@@ -31,6 +32,7 @@ class Category(models.Model):
     )
     slug = models.SlugField(
         unique=True,
+        validators=[MinLengthValidator(1)],
         verbose_name='Идентификатор',
         help_text=(
             'Идентификатор страницы для URL; разрешены символы латиницы, '

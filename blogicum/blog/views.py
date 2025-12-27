@@ -1,37 +1,17 @@
-from django.utils import timezone
-
-from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator
-from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from .forms import CommentForm, PostForm, RegisterForm, UserEditForm
 from .models import Category, Comment, Post
-
-
-def get_post_queryset(request_user=None, profile_user=None):
-    queryset = Post.objects.select_related(
-        'category', 'location', 'author'
-    ).annotate(comment_count=Count('comments'))
-    if profile_user:
-        queryset = queryset.filter(author=profile_user)
-    if request_user != profile_user:
-        queryset = queryset.filter(
-            pub_date__lte=timezone.now(),
-            is_published=True,
-            category__is_published=True,
-        )
-    return queryset.order_by('-pub_date')
+from .utils import get_paginated_page, get_post_queryset
 
 
 def index(request):
     post_list = get_post_queryset(request.user)
-    paginator = Paginator(post_list, settings.POSTS_PER_PAGE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = get_paginated_page(post_list, request)
     context = {'page_obj': page_obj}
     return render(request, 'blog/index.html', context)
 
@@ -39,9 +19,7 @@ def index(request):
 def category_posts(request, slug):
     category = get_object_or_404(Category, slug=slug, is_published=True)
     post_list = get_post_queryset(request.user).filter(category=category)
-    paginator = Paginator(post_list, settings.POSTS_PER_PAGE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = get_paginated_page(post_list, request)
     context = {'category': category, 'page_obj': page_obj}
     return render(request, 'blog/category.html', context)
 
@@ -49,9 +27,7 @@ def category_posts(request, slug):
 def profile(request, username):
     profile = get_object_or_404(User, username=username)
     post_list = get_post_queryset(request.user, profile)
-    paginator = Paginator(post_list, settings.POSTS_PER_PAGE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = get_paginated_page(post_list, request)
     context = {'profile': profile, 'page_obj': page_obj}
     return render(request, 'blog/profile.html', context)
 
