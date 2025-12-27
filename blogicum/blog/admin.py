@@ -43,7 +43,7 @@ class PostAdmin(admin.ModelAdmin):
         'location',
         'category',
         'is_published',
-    )  
+    )
     search_fields = ('title',)
     empty_value_display = 'Не задано'
 
